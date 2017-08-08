@@ -1,0 +1,59 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+ 	<context:annotation-config/>
+ 	<!-- 设置数据源 -->
+	<bean id="dataSource" 
+	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+      <property name="url" value="jdbc:mysql://localhost:3306/NetDisk?useSSL=false"/>
+      <property name="username" value="root"/>
+      <property name="password" value="147859682wo"/>
+     </bean>
+   <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <!-- 把数据源 bean 注入到sessionFactory的dataSource属性 -->
+        <property name="dataSource" ref="dataSource"/>
+        
+        <!-- hibernate的基本配置，如:方言，是否显示sql等 -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+        </property>
+        
+        <!-- 引入映射文件，如果有多个可以继续添加 <value> -->
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:com/lu/login/entities/UserInfo.hbm.xml</value>
+                <value>classpath:com/lu/netdisk/entities/FileInfo.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+    <!-- login -->
+    <bean id="userInfoDAO" class="com.lu.login.dao.UserInfoDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="userInfoService" class="com.lu.login.service.UserInfoServiceImpl">
+    	<property name="userInfoDAO" ref="userInfoDAO"/>
+    </bean>
+   	<bean id="userInfoController" class="com.lu.login.controller.UserInfoController">
+   		<property name="userInfoService" ref="userInfoService"/>
+    </bean>
+    <!-- netdisk -->
+    <bean id="fileInfoDAO" class="com.lu.netdisk.dao.FileInfoDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="fileInfoService" class="com.lu.netdisk.service.FileInfoServiceImpl">
+    	<property name="fileInfoDAO" ref="fileInfoDAO"/>
+    </bean>
+    <bean id="fileInfoController" class="com.lu.netdisk.controller.FileInfoController">
+    	<property name="fileInfoService" ref="fileInfoService"/>
+    </bean>
+ </beans>

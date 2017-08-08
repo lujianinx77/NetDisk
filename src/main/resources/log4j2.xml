@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<configuration monitorInterval="1800">  
+    <Properties>  
+        <Property name="log-path">d://logs</Property>  
+    </Properties>  
+  
+    <Appenders>  
+        <Console name="Console" target="SYSTEM_OUT">  
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>  
+        </Console>  
+        <File name="app_info" fileName="${log-path}/NetDisk/info.log" append="true">  
+            <Filters>  
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>  
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>  
+            </Filters>  
+  
+            <PatternLayout pattern="%d{ISO8601} [%p]  - %m%n"/>  
+        </File>  
+        <File name="app_error" fileName="${log-path}/netDisk/error.log" append="true">  
+            <Filters>  
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>  
+            </Filters>  
+            <PatternLayout pattern="%d{ISO8601} [%p] %l - %m%n"/>  
+        </File>  
+    </Appenders>  
+    <Loggers>  
+        <Logger name="com.lu" level="trace" additivity="false">  
+            <appender-ref ref="Console"/>  
+            <appender-ref ref="app_info"/>  
+            <appender-ref ref="app_error"/>  
+        </Logger>  
+    </Loggers>  
+</configuration> 

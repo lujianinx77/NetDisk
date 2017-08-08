@@ -1,0 +1,51 @@
+$(document).ready(function(){
+	const J_LOGIN_FAIL_TIP="#loginFailTip";
+	$(J_USERNAME).blur(function(){
+		var username=$(J_USERNAME).val();
+		if(username.length<8){
+			$(J_USERNAME).addClass(CSS_HAS_ERROR);
+			$(J_USERNAME_TIP).removeClass(CSS_HIDE);
+		}
+	});
+	$(J_USERNAME).focus(function(){
+		if($(J_USERNAME).hasClass(CSS_HAS_ERROR)){
+			$(J_USERNAME).removeClass(CSS_HAS_ERROR);
+			$(J_USERNAME_TIP).addClass(CSS_HIDE);
+		}
+	});
+	$(J_PASSWORD).blur(function(){
+		var username=$(J_PASSWORD).val();
+		if(username.length<8){
+			$(J_PASSWORD).addClass(CSS_HAS_ERROR);
+			$(J_PASSWORD_TIP).removeClass(CSS_HIDE);
+		}
+	});
+	$(J_PASSWORD).focus(function(){
+		if($(J_PASSWORD).hasClass(CSS_HAS_ERROR)){
+			$(J_PASSWORD).removeClass(CSS_HAS_ERROR);
+			$(J_PASSWORD_TIP).addClass(CSS_HIDE);
+		}
+	});
+	$(J_SUBMIT).click(function(){
+		if($(J_USERNAME).hasClass(CSS_HAS_ERROR)
+				||$(J_PASSWORD).hasClass(CSS_HAS_ERROR))
+			return;
+		$.ajax({
+			type:METHOD_POST,
+			url:USERINFO_MANAGER_LOGIN_ACTION,
+			data:{"username":$(J_USERNAME).val(),"password":$(J_PASSWORD).val()},
+			dataType:"text",
+			success:function(result){
+				if(RESULT_SUCCESS==result){
+					window.location=NETDISK_INDEX_PAGE;
+				}
+				else{
+					$(J_LOGIN_FAIL_TIP).removeClass(CSS_HIDE);
+					setTimeout(function(){
+						$(J_LOGIN_FAIL_TIP).addClass(CSS_HIDE);
+					},3000);
+				}
+			}
+		});
+	});
+});

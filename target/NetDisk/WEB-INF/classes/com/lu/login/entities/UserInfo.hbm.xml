@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2017-7-30 20:35:54 by Hibernate Tools 5.2.3.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="NetDisk" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.lu.login.entities.UserInfo" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="userinfo">
+        <id name="userId" type="int">
+            <column name="USER_ID"/>
+            <generator class="assigned"/>
+        </id>
+        <property generated="never" lazy="false" name="username" optimistic-lock="true" type="string" unique="false">
+            <column name="USERNAME" not-null="true" unique="true"/>
+        </property>
+        <property generated="never" lazy="false" name="password" optimistic-lock="true" type="string" unique="false">
+            <column length="20" name="PASSWORD" not-null="true"/>
+        </property>
+        <property generated="never" lazy="false" name="email" optimistic-lock="true" type="string" unique="false">
+            <column name="EMAIL" not-null="true"/>
+        </property>
+    </class>
+</hibernate-mapping>

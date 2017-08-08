@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:mvc="http://www.springframework.org/schema/mvc"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+   http://www.springframework.org/schema/mvc   
+   http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+   <mvc:annotation-driven />
+   <mvc:default-servlet-handler />
+   <!-- 配置拦截器 -->
+   <mvc:interceptors>
+   		<mvc:interceptor>
+   			<mvc:mapping path="/netDisk/*"/>
+   			<bean class="com.lu.login.interceptor.LoginInterceptor"></bean>
+   		</mvc:interceptor>
+   </mvc:interceptors>
+   <!-- 文件上传 -->
+   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+   		<property name="defaultEncoding" value="UTF-8"></property>
+   		<property name="maxUploadSize" value="557659508"></property>		
+   </bean>
+   <!-- 将 / 重定向到 /userinfoManager/index  用于设置主页并修改路径(/userinfo/index.jsp而不是 /) -->
+   <mvc:view-controller path="/" view-name="redirect:/userinfoManager/index"/>
+   <mvc:view-controller path="userinfoManager/index" view-name="userinfoManager/index"/>
+   <mvc:view-controller path="userinfoManager/mainPage" view-name="redirect:/netDisk/mainPage"/>
+   <mvc:view-controller path="netDisk/mainPage" view-name="netDisk/mainPage"/>
+   <mvc:view-controller path="userinfoManager/newUser" view-name="userinfoManager/newUser"/>
+   <mvc:view-controller path="userinfoManager/getPassword" view-name="userinfoManager/getPassword"/>
+    <mvc:view-controller path="netDisk/mainPage" view-name="netDisk/mainPage"/>
+   <!-- 设置Controller -->
+   <context:component-scan base-package="com.lu.login.controller" />
+   <context:component-scan base-package="com.lu.netdisk.controller" /> 
+   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      <property name="prefix" value="/Pages/jsp/" />
+      <property name="suffix" value=".jsp" />
+   </bean>
+</beans>
