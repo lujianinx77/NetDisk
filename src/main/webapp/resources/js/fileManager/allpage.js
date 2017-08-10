@@ -1,3 +1,4 @@
+//禁用全部的复选框
 function disablecheckbox(){
 	$("input[type='checkbox']").map(function(){
 		$(this).attr("disabled","true");
@@ -8,6 +9,7 @@ function enablecheckbox(){
 		$(this).removeAttr("disabled");
 	});
 }
+//禁用操作按钮（重命名、移动、下载、删除）
 function disableoperationbutton(rename,remove,down,isdelete){
 	if(rename)
 		$("#renamebutton").attr("disabled","true");
@@ -28,9 +30,11 @@ function enableoperationbutton(rename,remove,down,isdelete){
 	if(isdelete)
 		$("#deletebutton").removeAttr("disabled","true");
 }
+//获取当前路径
 function getcurrentpath(){
 	return (typeof($("#navigationpath").val()) == "undefined"?"":$("#navigationpath").val());
 }
+//刷新文件列表
 function refreshcurrentpath(){
 	var val = getcurrentpath();
 	$.ajax({
@@ -45,6 +49,7 @@ function refreshcurrentpath(){
 		}
 	});
 }
+//根据给定的json数据创建列表
 function createTableFromJSON(jsondata,tableid){
 	$("#"+tableid).children().map(function(){
 		if("THEAD" != this.tagName)
@@ -86,13 +91,16 @@ function checksamename(name){
 	return ishave;
 }
 $(document).ready(function(){
-	/*
-	 * 当页面加载完成时，显示根目录的文件
-	 * */
+	console.log($(window).height());
+	console.log($(document).height());
+	$("#fileinfotablediv").height($(window).height()-25-$("#operationdivbody").height()-$("#navigationdivbody").height());
 	$(window).resize(function(){
 		$("#fileinfotablediv").height($(document.body).height()-25-$("#operationdivbody").height()-$("#navigationdivbody").height());
 	});
 	disableoperationbutton(true,true,true,true);
+	/*
+	 * 当页面加载完成时，显示根目录的文件
+	 * */
 	$.ajax({
 		type:"post",
 		url:"getFileListAction",
@@ -114,7 +122,7 @@ $(document).ready(function(){
 		//title的格式为 ext-path
 		var ext = $(this).attr("ext-path").split("-")[0];
 		var path = $(this).attr("ext-path").split("-")[1];
-		//当类型为非文件夹时推出
+		//当类型为非文件夹时退出
 		if("path" != ext)
 			return;
 		//显示返回上一层
@@ -242,7 +250,7 @@ $(document).ready(function(){
 			disableoperationbutton(true,true,true,true);
 		else{
 			if(checkcount > 1){
-				disableoperationbutton(true,true,false,false);
+				disableoperationbutton(true,true,true,false);
 			}
 			else{
 				enableoperationbutton(true,true,true,true);
@@ -279,7 +287,7 @@ $(document).ready(function(){
 							enablecheckbox();	//恢复复选框
 						});
 						$("#renameconfirmbutton").click(function(){
-							if(checksamename(oldname)){
+							if(checksamename($("#newnametext").val())){
 								$("#newnametext").addClass("has-error");
 								return;
 							}
@@ -290,7 +298,7 @@ $(document).ready(function(){
 							$parent.append("<label>"+oldname+"</label>");
 							enableoperationbutton(true,true,true,true);
 							enablecheckbox();	//恢复复选框
-							//TODO:向服务器请求并修改页面上的值
+							//向服务器请求并修改页面上的值
 							$.ajax({
 								type:"post",
 								url:"renameFileAction",
@@ -521,4 +529,19 @@ $(document).ready(function(){
 		$("#uploadprogress").width((totalwidth/100)*per);
 		//console.log("以上传"+per+"%");
 	}
+	$("#downloadbutton").click(function (){
+		$("input[type='checkbox']").map(function(){
+				if($(this).prop("checked")){
+					var ext = $(this).attr("ext-path").split("-")[0];
+					var itemname = $(this).attr("ext-path").split("-")[1];
+					if("path" == ext)
+						return;
+					var filename = getcurrentpath()+itemname;
+					jQuery('<form class=\"hide\" action=\"fileDownloadAction\" method=\"post\">' +  // action请求路径及推送方法
+			                '<input type="text" name="fileName" value="'+filename+'"/>' + // 文件路径
+			            '</form>')
+			    .appendTo('body').submit().remove();
+				}
+		});
+	});
 });

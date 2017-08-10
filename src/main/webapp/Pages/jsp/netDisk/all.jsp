@@ -15,9 +15,9 @@
 	<input type="hidden" id="navigationpath" value=""/>
 	<div style="padding-left: 0px;padding-right:0px;" class="container-fluid">
 			<div style="user-select:none;">
-				<div id="operationdivbody"  class="btn-group" style="width:100%;margin-left:2px;margin-top:5px;">
+				<div id="operationdivbody"  class="btn-group" style="width:100%;">
 					<div id="uploaddiv" class="btn-group">
-						<input type="file" class="hide" id="upload"/>
+						<input type="file" class="hide" id="upload" multiple="multiple"/>
 						<label class="btn btn-primary" for="upload"><span class="glyphicon glyphicon-upload"></span> 上传</label>
 					</div>
 					<div id="uploadprogressdiv" class="btn-group hide" style="width:20%;border-radius:4px;">

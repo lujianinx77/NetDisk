@@ -1,6 +1,7 @@
 package com.lu.login.interceptor;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,11 @@ public class LoginInterceptor implements HandlerInterceptor {
 		}
 		//防止收到的数据为乱码
 		response.setCharacterEncoding("UTF-8");
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			log.error(e.getMessage());
+		}
 		return true;
 	}
 
