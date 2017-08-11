@@ -20,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lu.netdisk.entities.FileInfo;
@@ -42,7 +44,8 @@ public class FileInfoController {
 	private final String FILE_DOWNLOAD_ACTION="fileDownloadAction";
 	private final String RESPONSE_SUCCESS = "success";
 	private final String RESPONSE_FAIL = "fail";
-	private final String FILE_UPLOAD_PATH="D:\\SpringMVCFileUpload";	//文件在本地的存储路径
+	private final String FILE_UPLOAD_PATH="D:/SpringMVCFileUpload";	//文件在本地的存储路径
+	//private final String FILE_UPLOAD_PATH="/usr/local/netdiskfile";	//服务器用这个
 	private final String REAL_FILE_NAME_FORMAT = "yyyyMMddHHmmssSS";	//文件名格式
 	private final String[] SIZE_UNIT={"B","K","M","G"};	//文件长度单位
 	private final String SESSION_ATTRIBUTE_USERNAME = "username";
@@ -52,24 +55,23 @@ public class FileInfoController {
 		this.fileInfoService = fileInfoService;
 	}
 	@RequestMapping(value=FILE_UPLOAD_ACTION,method=RequestMethod.POST)
-	public void fileUploadAction(@RequestParam("path")String path
+	@ResponseBody
+	public String fileUploadAction(@RequestParam("path")String path
 			,@RequestParam("fileName")String filename
 			,@RequestParam("file")MultipartFile uploadFile
-			,HttpServletResponse response
 			,HttpSession session){
 		//MultipartFile在js中无法修改文件名，为了防止重名，通过传递参数获取文件名
 		String username = (String)session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
-		log.debug("filename:{} filesize:{}",filename,uploadFile.getSize());
 		//本地文件名为上传时间格式化为到毫秒
 		Date createTime= new Date();
 		String saveFileName= new SimpleDateFormat(REAL_FILE_NAME_FORMAT).format(createTime);
-		String savePath=FILE_UPLOAD_PATH+"\\"+username+"\\";
+		String savePath=FILE_UPLOAD_PATH+"/"+username+"/";
 		//如果目录不存在则创建目录
 		File directory = new File(savePath);
 		if(!directory.exists())	
 			directory.mkdirs();
 		String saveName=saveFileName;
-		log.debug("save to path:{}",savePath+saveName);
+		log.info("save to path:{}",savePath+saveName);
 		File file=new File(savePath,saveName);
 		try {
 			uploadFile.transferTo(file);
@@ -77,12 +79,7 @@ public class FileInfoController {
 			log.error(e.getMessage());
 			if(file.exists())
 				file.delete();
-			try {
-				response.getWriter().write(RESPONSE_FAIL);
-			} catch (IOException e1) {
-				log.error(e.getMessage());
-			}
-			return;//上传失败之后退出,不添加到数据库
+			return RESPONSE_FAIL;
 		}
 		//文件上传成功后将文件信息添加到数据库
 		FileInfo fileinfo= new FileInfo();
@@ -91,18 +88,14 @@ public class FileInfoController {
 		fileinfo.setUploaddate(createTime);
 		fileinfo.setUsername(username);
 		fileInfoService.uploadFile(fileinfo);
-		try {
-			response.getWriter().write(RESPONSE_SUCCESS);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
+		return RESPONSE_SUCCESS;
 	}
 	/*主页嵌套一个iframe用于显示不同类型的页面（全部文件、图片、视频等）
 	 * 通过GET参数 ?type= 来请求不同的页面
 	 * */
 	@RequestMapping(value=FILE_INFO_ACTION,method=RequestMethod.GET)
 	public String fileInfoPage(@RequestParam("type")String type){
-		log.debug("fileInfoPage type="+type);
+		log.info("fileInfoPage type="+type);
 		switch(type){
 			case "all":
 				return FILE_INFO_ALL_PAGE;
@@ -121,7 +114,8 @@ public class FileInfoController {
 		return String.format("%d%s", size,SIZE_UNIT[index]);
 	}
 	@RequestMapping(value=GET_FILE_LIST_ACTION,method=RequestMethod.POST)
-	public void getFileList(@RequestParam("path") String path,HttpServletResponse response
+	@ResponseBody
+	public String getFileList(@RequestParam("path") String path
 			,HttpSession session){
 		String username = (String) session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
 		List<FileInfo> list = fileInfoService.listFile(username, path+"%");
@@ -154,44 +148,32 @@ public class FileInfoController {
 			}
 		}
 		ret+="}";
-		log.debug(ret);
-		try {
-			response.getWriter().write(ret);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
+		log.info(ret);
+		return ret;
 	}
 	@RequestMapping(value=RENAME_FILE_ACTION,method=RequestMethod.POST)
-	public void renameFileAction(@RequestParam("oldName") String oldName
+	@ResponseBody
+	public String renameFileAction(@RequestParam("oldName") String oldName
 			,@RequestParam("newName") String newName
-			,HttpServletResponse response
 			,HttpSession session)
 	{
 		String username = (String) session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
 		fileInfoService.moveFile(username, oldName, newName);
-		try {
-			response.getWriter().write(RESPONSE_SUCCESS);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
+		return RESPONSE_SUCCESS;
 	}
 	@RequestMapping(value=MOVE_FILE_ACTION,method=RequestMethod.POST)
-	public void moveFileAction(@RequestParam("oldName") String oldName
+	@ResponseBody
+	public String moveFileAction(@RequestParam("oldName") String oldName
 			,@RequestParam("newName") String newName
-			,HttpServletResponse response
 			,HttpSession session)
 	{
 		String username = (String) session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
 		fileInfoService.moveFile(username, oldName, newName);
-		try {
-			response.getWriter().write(RESPONSE_SUCCESS);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
+		return RESPONSE_SUCCESS;
 	}
 	@RequestMapping(value=DELETE_FILE_ACTION,method=RequestMethod.POST)
-	public void deleteFilesAction(@RequestParam(value="names[]")String[] names
-			,HttpServletResponse response
+	@ResponseBody
+	public String deleteFilesAction(@RequestParam(value="names[]")String[] names
 			,HttpSession session){
 		String username = (String) session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
 		FileInfo fileinfo = null;
@@ -201,36 +183,26 @@ public class FileInfoController {
 			if(!item.endsWith("/")){
 				fileinfo = fileInfoService.getFileInfo(username, item);
 				String realFileName = dateFormat.format(fileinfo.getUploaddate());
-				log.debug("删除文件:{}/{}",username,realFileName);
+				log.info("删除文件:{}/{}",username,realFileName);
 				File file = new File(FILE_UPLOAD_PATH+"/"+username+"/"+realFileName);
 				file.delete();
 			}
 			fileInfoService.deleteFile(username, item);
 		}
-		try {
-			response.getWriter().write(RESPONSE_SUCCESS);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
+			return RESPONSE_SUCCESS;
 	}
 	@RequestMapping(value=CREATE_FOLDER_ACTION,method=RequestMethod.POST)
-	public void createFolderAction(@RequestParam("folderName")String foldername
+	@ResponseBody
+	public String createFolderAction(@RequestParam("folderName")String foldername
 			,HttpServletResponse response
 			,HttpSession session){
 		if(!foldername.endsWith("/")){
-			try {
-				response.getWriter().write(RESPONSE_FAIL);
-			} catch (IOException e) {
-				log.error(e.getMessage());
-			}
+			return RESPONSE_FAIL;
 		}
 		String username = (String) session.getAttribute(SESSION_ATTRIBUTE_USERNAME);
+		log.info("用户:{} 创建文件夹:{}",username,foldername);
 		fileInfoService.createFolser(username, foldername);
-		try {
-			response.getWriter().write(RESPONSE_SUCCESS);
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}	
+		return RESPONSE_SUCCESS;
 	}
 	@RequestMapping(value=FILE_DOWNLOAD_ACTION,method=RequestMethod.POST)
 	public void  fileDownloadAction(@RequestParam("fileName")String filename

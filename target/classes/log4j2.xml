@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <configuration monitorInterval="1800">  
     <Properties>  
-        <Property name="log-path">d://logs</Property>  
+        <Property name="log-path">/usr/local/netdiskfile/log</Property>  
     </Properties>  
   
     <Appenders>  
@@ -16,7 +16,7 @@
   
             <PatternLayout pattern="%d{ISO8601} [%p]  - %m%n"/>  
         </File>  
-        <File name="app_error" fileName="${log-path}/netDisk/error.log" append="true">  
+        <File name="app_error" fileName="${log-path}/NetDisk/error.log" append="true">  
             <Filters>  
                 <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>  
             </Filters>  
