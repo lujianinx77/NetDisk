@@ -1,6 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/main/java/com/lu/login/controller/UserInfoController.java=UTF-8
-encoding//src/main/webapp/Pages/jsp/netDisk/mainPage.jsp=UTF-8
-encoding//src/main/webapp/Pages/jsp/userinfoManager/getPassword.jsp=UTF-8
-encoding//src/main/webapp/Pages/jsp/userinfoManager/index.jsp=UTF-8
-encoding//src/main/webapp/Pages/jsp/userinfoManager/newUser.jsp=UTF-8
+encoding//src/main/webapp/Pages/jsp/um/forgetpwd.jsp=UTF-8
+encoding//src/main/webapp/Pages/jsp/um/login.jsp=UTF-8
+encoding//src/main/webapp/Pages/jsp/um/register.jsp=UTF-8

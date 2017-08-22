@@ -18,7 +18,7 @@ import com.lu.login.service.Slf4jTest;
 import com.lu.login.service.UserInfoService;
 
 @Controller
-@RequestMapping(value="userinfoManager/")
+@RequestMapping(value="um/")
 public class UserInfoController {
 	private static Logger log = LoggerFactory.getLogger(UserInfoController.class);
 	@Autowired

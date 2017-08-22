@@ -38,12 +38,12 @@
    		<property name="maxUploadSize" value="557659508"></property>		
    </bean>
    <!-- 将 / 重定向到 /userinfoManager/index  用于设置主页并修改路径(/userinfo/index.jsp而不是 /) -->
-   <mvc:view-controller path="/" view-name="redirect:/userinfoManager/index"/>
-   <mvc:view-controller path="userinfoManager/index" view-name="userinfoManager/index"/>
-   <mvc:view-controller path="userinfoManager/mainPage" view-name="redirect:/netDisk/mainPage"/>
+   <mvc:view-controller path="/" view-name="redirect:/um/login"/>
+   <mvc:view-controller path="um/login" view-name="um/login"/>
+   <mvc:view-controller path="um/mainPage" view-name="redirect:/netDisk/mainPage"/>
    <mvc:view-controller path="netDisk/mainPage" view-name="netDisk/mainPage"/>
-   <mvc:view-controller path="userinfoManager/newUser" view-name="userinfoManager/newUser"/>
-   <mvc:view-controller path="userinfoManager/getPassword" view-name="userinfoManager/getPassword"/>
+   <mvc:view-controller path="um/register" view-name="um/register"/>
+   <mvc:view-controller path="um/forgetpwd" view-name="um/forgetpwd"/>
     <mvc:view-controller path="netDisk/mainPage" view-name="netDisk/mainPage"/>
    <!-- 设置Controller -->
    <context:component-scan base-package="com.lu.login.controller" />

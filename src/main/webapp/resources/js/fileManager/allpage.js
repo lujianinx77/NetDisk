@@ -91,12 +91,6 @@ function checksamename(name){
 	return ishave;
 }
 $(document).ready(function(){
-	console.log($(window).height());
-	console.log($(document).height());
-	$("#fileinfotablediv").height($(window).height()-25-$("#operationdivbody").height()-$("#navigationdivbody").height());
-	$(window).resize(function(){
-		$("#fileinfotablediv").height($(document.body).height()-25-$("#operationdivbody").height()-$("#navigationdivbody").height());
-	});
 	disableoperationbutton(true,true,true,true);
 	/*
 	 * 当页面加载完成时，显示根目录的文件
@@ -419,16 +413,17 @@ $(document).ready(function(){
 		});
 	});
 	$("#createfolderbutton").click(function(){
-		$("#createfolderdiv").removeClass("hide");
+		$("#createfoldermodal").modal("show");
 		$("#foldername").focus();
-	});
-	$("#foldername").focus(function(){
-		$(this).removeClass("has-error");
 	});
 	$("#createfolderconfirmbutton").click(function(){
 		var foldername = $("#foldername").val()
 		//文件夹名已存在
 		if(checksamename(foldername)){
+			$("#foldername").addClass("has-error");
+			return;
+		}
+		if(foldername == ""){
 			$("#foldername").addClass("has-error");
 			return;
 		}
@@ -444,19 +439,15 @@ $(document).ready(function(){
 			dataType:"text",
 			success:function(result){
 				if("success" == result){
+					$("#createfoldermodal").modal("hide");
 					refreshcurrentpath();
 				}
 			}
 		});
 	});
-	$("#createfoldercancelbutton").click(function(){
-		$("#createfolderdiv").addClass("hide");
-		$("#foldername").val("");
-	});
 	$("#upload").on("change",function(){
 		if("" == this.value)
 			return;
-		$("#uploaddiv").addClass("hide");
 		$("#uploadprogressdiv").removeClass("hide");
 		var file= $("#upload").get(0).files[0];
 		//console.log(file);
@@ -514,10 +505,10 @@ $(document).ready(function(){
 				if("success"==result)
 					{
 						refreshcurrentpath();
-						$("#uploaddiv").removeClass("hide");
 						$("#uploadprogressdiv").addClass("hide");
+						$("#uploadprogress").width(0);
 						var upload=$("#upload").val("");
-					}
+					}     
 			}
 		});
 	});
@@ -537,7 +528,7 @@ $(document).ready(function(){
 					if("path" == ext)
 						return;
 					var filename = getcurrentpath()+itemname;
-					jQuery('<form class=\"hide\" action=\"fileDownloadAction\" method=\"post\">' +  // action请求路径及推送方法
+					jQuery('<form class=\"hide\" action=\"fileDownloadAction\" method=\"GET\">' +  // action请求路径及推送方法
 			                '<input type="text" name="fileName" value="'+filename+'"/>' + // 文件路径
 			            '</form>')
 			    .appendTo('body').submit().remove();

@@ -204,7 +204,7 @@ public class FileInfoController {
 		fileInfoService.createFolser(username, foldername);
 		return RESPONSE_SUCCESS;
 	}
-	@RequestMapping(value=FILE_DOWNLOAD_ACTION,method=RequestMethod.POST)
+	@RequestMapping(value=FILE_DOWNLOAD_ACTION,method=RequestMethod.GET)
 	public void  fileDownloadAction(@RequestParam("fileName")String filename
 			,HttpServletResponse response
 			,HttpSession session){
